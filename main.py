@@ -9,15 +9,54 @@ app = FastAPI(title="Daily Fitness Tracker")
 
 templates = Jinja2Templates(directory="templates")
 
+# ======================
+# МОДЕЛИ
+# ======================
+
 class Workout(BaseModel):
     id: int
     name: str
     description: str
     day: date
 
+class PresetWorkout(BaseModel):
+    name: str
+    description: str
+
+# ======================
+# "БАЗА ДАННЫХ"
+# ======================
+
 workouts: List[Workout] = []
 current_id = 1
 
+# Заготовленные примеры тренировок
+preset_workouts: List[PresetWorkout] = [
+    PresetWorkout(
+        name="Грудь и трицепс",
+        description="Жим лёжа 4x8, жим гантелей 3x10, отжимания 3x15, французский жим 3x10"
+    ),
+    PresetWorkout(
+        name="Спина и бицепс",
+        description="Подтягивания 4x6, тяга штанги 4x8, сгибания рук 3x12"
+    ),
+    PresetWorkout(
+        name="Ноги",
+        description="Присед 4x8, жим ногами 3x10, выпады 3x12, икры 4x15"
+    ),
+    PresetWorkout(
+        name="Кардио",
+        description="Бег 20 минут или велотренажёр 30 минут, пульс 130–150"
+    ),
+    PresetWorkout(
+        name="Функциональная",
+        description="Берпи 3x10, планка 3x60с, прыжки 3x20"
+    )
+]
+
+# ======================
+# ВЕБ-СТРАНИЦЫ
+# ======================
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
@@ -29,7 +68,8 @@ def index(request: Request):
         {
             "request": request,
             "workouts": today_workouts,
-            "today": today
+            "today": today,
+            "presets": preset_workouts
         }
     )
 
@@ -49,6 +89,24 @@ def add_workout(
         )
     )
     current_id += 1
+
+    return RedirectResponse(url="/", status_code=303)
+
+@app.post("/add_preset")
+def add_preset_workout(preset_name: str = Form(...)):
+    global current_id
+
+    preset = next((p for p in preset_workouts if p.name == preset_name), None)
+    if preset:
+        workouts.append(
+            Workout(
+                id=current_id,
+                name=preset.name,
+                description=preset.description,
+                day=date.today()
+            )
+        )
+        current_id += 1
 
     return RedirectResponse(url="/", status_code=303)
 

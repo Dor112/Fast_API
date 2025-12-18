@@ -18,7 +18,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -26,7 +26,7 @@
         header {
             text-align: center;
             color: white;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         header h1 {
@@ -35,26 +35,31 @@
         }
 
         header .date {
+            margin-top: 8px;
             opacity: 0.9;
-            margin-top: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
         .card {
             background: white;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 20px;
-            margin-bottom: 25px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
 
         .card h2 {
             margin-top: 0;
             margin-bottom: 15px;
+            color: #1e3c72;
         }
 
-        form input,
-        form textarea,
-        form button {
+        input, textarea, select, button {
             width: 100%;
             padding: 12px;
             margin-top: 10px;
@@ -63,12 +68,12 @@
             font-size: 15px;
         }
 
-        form textarea {
+        textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 90px;
         }
 
-        form button {
+        button {
             background: #2a5298;
             color: white;
             border: none;
@@ -77,7 +82,7 @@
             transition: background 0.2s;
         }
 
-        form button:hover {
+        button:hover {
             background: #1e3c72;
         }
 
@@ -89,47 +94,52 @@
 
         .workout {
             background: white;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 18px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
         }
 
         .workout h3 {
-            margin: 0 0 10px 0;
+            margin: 0 0 8px 0;
             color: #1e3c72;
         }
 
         .workout p {
-            flex-grow: 1;
             font-size: 14px;
             line-height: 1.4;
+            flex-grow: 1;
         }
 
-        .workout form button {
+        .workout button {
             margin-top: 15px;
             background: #e74c3c;
         }
 
-        .workout form button:hover {
+        .workout button:hover {
             background: #c0392b;
         }
 
         .empty {
             text-align: center;
             color: white;
-            margin-top: 40px;
             font-size: 18px;
             opacity: 0.9;
+            margin-top: 40px;
         }
 
         footer {
             text-align: center;
             color: rgba(255, 255, 255, 0.8);
-            margin-top: 40px;
+            margin-top: 50px;
             font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -142,13 +152,31 @@
         <div class="date">План тренировок на {{ today }}</div>
     </header>
 
-    <div class="card">
-        <h2>Добавить тренировку</h2>
-        <form method="post" action="/add">
-            <input type="text" name="name" placeholder="Название тренировки" required>
-            <textarea name="description" placeholder="Описание: упражнения, подходы, заметки" required></textarea>
-            <button type="submit">Добавить в план</button>
-        </form>
+    <div class="grid">
+
+        <!-- Ручное добавление -->
+        <div class="card">
+            <h2>Добавить тренировку</h2>
+            <form method="post" action="/add">
+                <input type="text" name="name" placeholder="Название (например: Ноги)" required>
+                <textarea name="description" placeholder="Упражнения, подходы, заметки" required></textarea>
+                <button type="submit">Добавить</button>
+            </form>
+        </div>
+
+        <!-- Добавление из шаблона -->
+        <div class="card">
+            <h2>Готовые тренировки</h2>
+            <form method="post" action="/add_preset">
+                <select name="preset_name" required>
+                    {% for p in presets %}
+                    <option value="{{ p.name }}">{{ p.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Добавить из шаблона</button>
+            </form>
+        </div>
+
     </div>
 
     {% if workouts|length > 0 %}
