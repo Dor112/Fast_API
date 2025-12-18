@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Фитнес-трекер</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(120deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        header .date {
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        form input,
+        form textarea,
+        form button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        form button {
+            background: #2a5298;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        form button:hover {
+            background: #1e3c72;
+        }
+
+        .workout-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .workout {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .workout h3 {
+            margin: 0 0 10px 0;
+            color: #1e3c72;
+        }
+
+        .workout p {
+            flex-grow: 1;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .workout form button {
+            margin-top: 15px;
+            background: #e74c3c;
+        }
+
+        .workout form button:hover {
+            background: #c0392b;
+        }
+
+        .empty {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 40px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Фитнес-трекер</h1>
+        <div class="date">План тренировок на {{ today }}</div>
+    </header>
+
+    <div class="card">
+        <h2>Добавить тренировку</h2>
+        <form method="post" action="/add">
+            <input type="text" name="name" placeholder="Название тренировки" required>
+            <textarea name="description" placeholder="Описание: упражнения, подходы, заметки" required></textarea>
+            <button type="submit">Добавить в план</button>
+        </form>
+    </div>
+
+    {% if workouts|length > 0 %}
+    <div class="workout-list">
+        {% for w in workouts %}
+        <div class="workout">
+            <h3>{{ w.name }}</h3>
+            <p>{{ w.description }}</p>
+            <form method="post" action="/delete/{{ w.id }}">
+                <button type="submit">Тренировка выполнена</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty">
+        На сегодня тренировок нет 💪
+    </div>
+    {% endif %}
+
+    <footer>
+        Личный фитнес-дневник · FastAPI
+    </footer>
+
+</div>
+
+</body>
+</html>
