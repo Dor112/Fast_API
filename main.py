@@ -9,9 +9,6 @@ app = FastAPI(title="Daily Fitness Tracker")
 
 templates = Jinja2Templates(directory="templates")
 
-# ======================
-# МОДЕЛИ
-# ======================
 
 class Workout(BaseModel):
     id: int
@@ -23,9 +20,6 @@ class PresetWorkout(BaseModel):
     name: str
     description: str
 
-# ======================
-# "БАЗА ДАННЫХ"
-# ======================
 
 workouts: List[Workout] = []
 current_id = 1
@@ -54,9 +48,7 @@ preset_workouts: List[PresetWorkout] = [
     )
 ]
 
-# ======================
-# ВЕБ-СТРАНИЦЫ
-# ======================
+
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
@@ -116,6 +108,5 @@ def delete_workout(workout_id: int):
     workouts = [w for w in workouts if w.id != workout_id]
     return RedirectResponse(url="/", status_code=303)
 
-# ======================
 # ЗАПУСК
 # uvicorn main:app --reload
